@@ -10,6 +10,8 @@ app.post('/upload', upload.single('image'), imageController.uploadImage);
 
 app.get('/download/:fileName', imageController.downloadImage);
 
+app.get('/metadata/:fileName', imageController.getImageMetadata);
+
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}\n`);
 });
