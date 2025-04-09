@@ -1,6 +1,7 @@
 const AWS = require('aws-sdk');
 
 const s3 = new AWS.S3({ region: process.env.AWS_REGION });
+const bucketName = process.env.S3_BUCKET_NAME;
 
 exports.uploadFile = async (file) => {
   const key = file.originalname;
