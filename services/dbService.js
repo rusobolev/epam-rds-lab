@@ -21,3 +21,14 @@ exports.getImageMetadataByName = async (fileName) => {
     });
   });
 };
+
+exports.getRandomImageMetadata = async () => {
+    return new Promise((resolve, reject) => {
+      const query = 'SELECT * FROM images ORDER BY RAND() LIMIT 1';
+      connection.execute(query, (err, results) => {
+        if (err) return reject(err);
+        if (results.length === 0) return reject(new Error('No images found in database'));
+        resolve(results[0]);
+      });
+    });
+  };

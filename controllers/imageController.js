@@ -57,3 +57,17 @@ exports.getImageMetadata = async (req, res) => {
     res.status(500).send('Error while retrieving metadata');
   }
 };
+
+exports.getRandomImageMetadata = async (req, res) => {
+    try {
+      const metadata = await dbService.getRandomImageMetadata();
+      res.status(200).json(metadata);
+    } catch (err) {
+      console.error(err);
+      if (err.message === 'No images found in database') {
+        return res.status(404).send('No images in database');
+      }
+      res.status(500).send('Error retrieving random image metadata');
+    }
+  };
+  
