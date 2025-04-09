@@ -11,6 +11,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     if (!req.file) return res.status(400).send('No file uploaded');
 
     const s3Key = await s3Service.uploadFile(req.file);
+    console.log(`File uploaded: ${s3Key}\n`);
+
     res.json({ message: 'File uploaded', s3_key: s3Key });
   } catch (err) {
     console.error(err);
@@ -19,5 +21,5 @@ app.post('/upload', upload.single('image'), async (req, res) => {
 });
 
 app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+  console.log(`Server running on port ${process.env.PORT}\n`);
 });
