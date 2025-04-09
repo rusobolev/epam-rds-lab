@@ -27,24 +27,24 @@ exports.uploadImage = async (req, res) => {
   }
 };
 
+// Новый метод для скачивания файла
 exports.downloadImage = async (req, res) => {
-  const { fileName } = req.params;
+  const { fileName } = req.params; // Извлекаем имя файла из URL
 
   try {
-    // Проверяем, существует ли файл на S3
-    const fileExists = await s3Service.getFile(fileName);
-
-    if (!fileExists) {
-      return res.status(404).send('File not found');
-    }
-
+    // Пытаемся скачать файл с S3
     const fileContent = await s3Service.downloadFile(fileName);
 
+    // Отправляем файл в ответ
     res.setHeader('Content-Type', 'application/octet-stream');
     res.setHeader('Content-Disposition', `attachment; filename=${fileName}`);
     res.send(fileContent);
   } catch (err) {
     console.error(err);
+    // Если файл не найден, возвращаем ошибку 404
+    if (err.message === 'File not found') {
+      return res.status(404).send('File not found');
+    }
     res.status(500).send('Error while downloading the file');
   }
 };
