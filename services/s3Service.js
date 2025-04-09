@@ -13,3 +13,34 @@ exports.uploadFile = async (file) => {
   await s3.putObject(params).promise();
   return key;
 };
+
+// Функция для проверки существования файла в S3
+exports.getFile = async (s3Key) => {
+  try {
+    const params = {
+      Bucket: process.env.S3_BUCKET,
+      Key: s3Key,
+    };
+
+    // Проверяем наличие файла с таким ключом
+    await s3.headObject(params).promise();
+    return true; // Файл существует
+  } catch (err) {
+    if (err.code === 'NotFound') {
+      return false; // Файл не найден
+    }
+    throw err; // Другие ошибки
+  }
+};
+
+// Функция для скачивания файла с S3
+exports.downloadFile = async (s3Key) => {
+  const params = {
+    Bucket: process.env.S3_BUCKET,
+    Key: s3Key,
+  };
+
+  // Скачиваем файл
+  const data = await s3.getObject(params).promise();
+  return data.Body; // Возвращаем содержимое файла
+};
