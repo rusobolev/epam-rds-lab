@@ -43,3 +43,20 @@ exports.getRandomImageMetadata = async () => {
     });
   };
   
+exports.insertMetadata = async (metadata) => {
+    return new Promise((resolve, reject) => {
+      const query = 'INSERT INTO images (name, s3_key, file_extension, size, last_update_date) VALUES (?, ?, ?, ?, NOW())';
+      connection.execute(query, [
+        metadata.name,
+        metadata.s3_key,
+        metadata.file_extension,
+        metadata.size
+      ], (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(results);
+      });
+    });
+  };
+  
