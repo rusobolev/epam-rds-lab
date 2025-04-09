@@ -32,3 +32,14 @@ exports.getRandomImageMetadata = async () => {
       });
     });
   };
+
+  exports.deleteImageMetadata = async (fileName) => {
+    return new Promise((resolve, reject) => {
+      const query = 'DELETE FROM images WHERE name = ?';
+      connection.execute(query, [fileName], (err, results) => {
+        if (err) return reject(err);
+        resolve();
+      });
+    });
+  };
+  

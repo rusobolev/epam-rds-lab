@@ -71,3 +71,20 @@ exports.getRandomImageMetadata = async (req, res) => {
     }
   };
   
+  exports.deleteImage = async (req, res) => {
+    const { fileName } = req.params;
+  
+    try {
+      await s3Service.deleteFile(fileName);
+  
+      await dbService.deleteImageMetadata(fileName);
+  
+      res.status(200).send('Image and metadata deleted');
+    } catch (err) {
+      console.error(err);
+      if (err.message === 'File not found') {
+        return res.status(404).send('File not found');
+      }
+      res.status(500).send('Error deleting image');
+    }
+  };

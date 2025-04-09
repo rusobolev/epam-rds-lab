@@ -14,7 +14,6 @@ exports.uploadFile = async (file) => {
   return key;
 };
 
-// Функция для проверки и скачивания файла с S3
 exports.downloadFile = async (s3Key) => {
   const params = {
     Bucket: process.env.S3_BUCKET,
@@ -22,13 +21,29 @@ exports.downloadFile = async (s3Key) => {
   };
 
   try {
-    // Пытаемся получить объект с S3
     const data = await s3.getObject(params).promise();
-    return data.Body; // Возвращаем содержимое файла
+    return data.Body;
   } catch (err) {
     if (err.code === 'NoSuchKey') {
-      throw new Error('File not found'); // Если файла нет, выбрасываем ошибку
+      throw new Error('File not found'); 
     }
-    throw err; // Для других ошибок
+    throw err;
   }
+};
+
+exports.deleteFile = async (fileName) => {
+  try {
+    await s3
+      .headObject({ Bucket: bucketName, Key: fileName })
+      .promise();
+  } catch (err) {
+    if (err.code === 'NotFound') {
+      throw new Error('File not found');
+    }
+    throw err;
+  }
+
+  return s3
+    .deleteObject({ Bucket: bucketName, Key: fileName })
+    .promise();
 };

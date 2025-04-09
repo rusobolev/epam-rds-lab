@@ -14,6 +14,8 @@ app.get('/metadata/random', imageController.getRandomImageMetadata);
 
 app.get('/metadata/:fileName', imageController.getImageMetadata);
 
+app.delete('/delete/:fileName', imageController.deleteImage);
+
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}\n`);
 });
