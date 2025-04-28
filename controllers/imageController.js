@@ -1,5 +1,6 @@
 const s3Service = require('../services/s3Service');
 const dbService = require('../services/dbService');
+const snsService = require('../services/snsService');
 
 exports.uploadImage = async (req, res) => {
   try {
@@ -91,38 +92,28 @@ exports.getRandomImageMetadata = async (req, res) => {
 
   exports.subscribeEmail = async (req, res) => {
     const { email } = req.body;
-  
     if (!email) {
       return res.status(400).send('Email is required');
     }
-  
     try {
-      await dbService.subscribeEmail(email);
-      res.status(200).send('Subscribed successfully');
+      await snsService.subscribeEmail(email);
+      res.status(200).send(`Confirmation email sent to ${email}`);
     } catch (err) {
       console.error(err);
-      if (err.message === 'Email already subscribed') {
-        return res.status(409).send('Email already subscribed');
-      }
-      res.status(500).send('Subscription failed');
+      res.status(500).send('Error subscribing email');
     }
   };
   
   exports.unsubscribeEmail = async (req, res) => {
     const { email } = req.body;
-  
     if (!email) {
       return res.status(400).send('Email is required');
     }
-  
     try {
-      await dbService.unsubscribeEmail(email);
-      res.status(200).send('Unsubscribed successfully');
+      await snsService.unsubscribeEmail(email);
+      res.status(200).send(`Email ${email} unsubscribed successfully`);
     } catch (err) {
       console.error(err);
-      if (err.message === 'Email not found') {
-        return res.status(404).send('Email not found');
-      }
-      res.status(500).send('Unsubscription failed');
+      res.status(500).send('Error unsubscribing email');
     }
   };
