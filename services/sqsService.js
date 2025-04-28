@@ -3,7 +3,6 @@ const AWS = require('aws-sdk');
 const sqs = new AWS.SQS({ region: process.env.AWS_REGION });
 
 const queueUrl = process.env.SQS_QUEUE_URL;
-//const queueUrl = "https://sqs.us-east-1.amazonaws.com/159447948044/epamASobolev-UploadsNotificationQueueb";
 
 exports.sendMessage = async (messageBody) => {
   const params = {

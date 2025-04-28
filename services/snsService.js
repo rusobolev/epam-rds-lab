@@ -3,7 +3,6 @@ const AWS = require('aws-sdk');
 const sns = new AWS.SNS({ region: process.env.AWS_REGION });
 
 const topicArn = process.env.SNS_TOPIC_ARN;
-//const topicArn = "arn:aws:sns:us-east-1:159447948044:epamASobolev-UploadsNotificationTopic";
 
 exports.publishNotification = async (message) => {
   const params = {
@@ -23,14 +22,26 @@ exports.subscribeEmail = async (email) => {
     return sns.subscribe(params).promise();
   };
 
-  exports.unsubscribeEmail = async (subscriptionArn) => {
-    if (!subscriptionArn || subscriptionArn === 'PendingConfirmation') {
-      throw new Error('Cannot unsubscribe: Subscription is still pending confirmation or invalid ARN.');
-    }
-  
+  exports.unsubscribeEmailByEmail = async (email) => {
     const params = {
-      SubscriptionArn: subscriptionArn,
+      TopicArn: topicArn,
     };
   
-    return sns.unsubscribe(params).promise();
+    const response = await sns.listSubscriptionsByTopic(params).promise();
+  
+    const subscription = response.Subscriptions.find(sub => sub.Endpoint === email);
+  
+    if (!subscription) {
+      throw new Error(`Subscription not found for email: ${email}`);
+    }
+  
+    if (subscription.SubscriptionArn === 'PendingConfirmation') {
+      throw new Error(`Subscription for ${email} is still pending confirmation`);
+    }
+  
+    const unsubscribeParams = {
+      SubscriptionArn: subscription.SubscriptionArn,
+    };
+  
+    return sns.unsubscribe(unsubscribeParams).promise();
   };

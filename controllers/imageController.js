@@ -118,7 +118,7 @@ exports.getRandomImageMetadata = async (req, res) => {
       return res.status(400).send('Email is required');
     }
     try {
-      await snsService.unsubscribeEmail(email);
+      await snsService.unsubscribeEmailByEmail(email);
       res.status(200).send(`Email ${email} unsubscribed successfully`);
     } catch (err) {
       console.error(err);
