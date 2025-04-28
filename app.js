@@ -6,9 +6,15 @@ const imageController = require('./controllers/imageController');
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 
+app.use(express.json());
+
 app.delete('/delete/:fileName', imageController.deleteImage);
 
 app.post('/upload', upload.single('image'), imageController.uploadImage);
+
+app.post('/subscribe', imageController.subscribeEmail);
+
+app.post('/unsubscribe', imageController.unsubscribeEmail);
 
 app.get('/download/:fileName', imageController.downloadImage);
 

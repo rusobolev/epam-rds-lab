@@ -88,3 +88,41 @@ exports.getRandomImageMetadata = async (req, res) => {
       res.status(500).send('Error deleting image');
     }
   };
+
+  exports.subscribeEmail = async (req, res) => {
+    const { email } = req.body;
+  
+    if (!email) {
+      return res.status(400).send('Email is required');
+    }
+  
+    try {
+      await dbService.subscribeEmail(email);
+      res.status(200).send('Subscribed successfully');
+    } catch (err) {
+      console.error(err);
+      if (err.message === 'Email already subscribed') {
+        return res.status(409).send('Email already subscribed');
+      }
+      res.status(500).send('Subscription failed');
+    }
+  };
+  
+  exports.unsubscribeEmail = async (req, res) => {
+    const { email } = req.body;
+  
+    if (!email) {
+      return res.status(400).send('Email is required');
+    }
+  
+    try {
+      await dbService.unsubscribeEmail(email);
+      res.status(200).send('Unsubscribed successfully');
+    } catch (err) {
+      console.error(err);
+      if (err.message === 'Email not found') {
+        return res.status(404).send('Email not found');
+      }
+      res.status(500).send('Unsubscription failed');
+    }
+  };

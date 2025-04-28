@@ -60,3 +60,30 @@ exports.insertMetadata = async (metadata) => {
     });
   };
   
+  exports.subscribeEmail = async (email) => {
+    return new Promise((resolve, reject) => {
+      const query = 'INSERT INTO subscriptions (email) VALUES (?)';
+      connection.execute(query, [email], (err, results) => {
+        if (err) {
+          if (err.code === 'ER_DUP_ENTRY') {
+            return reject(new Error('Email already subscribed'));
+          }
+          return reject(err);
+        }
+        resolve(results);
+      });
+    });
+  };
+
+  exports.unsubscribeEmail = async (email) => {
+    return new Promise((resolve, reject) => {
+      const query = 'DELETE FROM subscriptions WHERE email = ?';
+      connection.execute(query, [email], (err, results) => {
+        if (err) return reject(err);
+        if (results.affectedRows === 0) {
+          return reject(new Error('Email not found'));
+        }
+        resolve(results);
+      });
+    });
+  };
