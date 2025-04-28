@@ -11,3 +11,21 @@ exports.publishNotification = async (message) => {
   };
   await sns.publish(params).promise();
 };
+
+exports.subscribeEmail = async (email) => {
+    const params = {
+      Protocol: 'email',
+      TopicArn: topicArn,
+      Endpoint: email,
+    };
+  
+    return sns.subscribe(params).promise();
+  };
+
+exports.unsubscribeEmail = async (subscriptionArn) => {
+  const params = {
+    SubscriptionArn: subscriptionArn,
+  };
+ 
+  return sns.unsubscribe(params).promise();
+};
