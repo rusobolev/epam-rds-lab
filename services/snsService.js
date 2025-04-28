@@ -23,10 +23,14 @@ exports.subscribeEmail = async (email) => {
     return sns.subscribe(params).promise();
   };
 
-exports.unsubscribeEmail = async (subscriptionArn) => {
-  const params = {
-    SubscriptionArn: subscriptionArn,
+  exports.unsubscribeEmail = async (subscriptionArn) => {
+    if (!subscriptionArn || subscriptionArn === 'PendingConfirmation') {
+      throw new Error('Cannot unsubscribe: Subscription is still pending confirmation or invalid ARN.');
+    }
+  
+    const params = {
+      SubscriptionArn: subscriptionArn,
+    };
+  
+    return sns.unsubscribe(params).promise();
   };
- 
-  return sns.unsubscribe(params).promise();
-};
