@@ -1,6 +1,7 @@
 const s3Service = require('../services/s3Service');
 const dbService = require('../services/dbService');
 const snsService = require('../services/snsService');
+const sqsService = require('../services/sqsService');
 
 exports.uploadImage = async (req, res) => {
   try {
@@ -17,6 +18,13 @@ exports.uploadImage = async (req, res) => {
       s3_key: s3Key,
       file_extension: fileExtension,
       size: fileSize,
+    });
+
+    await sqsService.sendMessage({
+      name: file.originalname,
+      size: file.size,
+      extension: fileExtension,
+      downloadUrl: `http://${process.env.EC2_PUBLIC_IP}:${process.env.PORT}/download/${encodeURIComponent(file.originalname)}`,
     });
 
     res.status(200).json({ message: 'File uploaded and metadata saved', s3_key: s3Key });

@@ -1,27 +1,13 @@
 const AWS = require('aws-sdk');
 
-const sns = new AWS.SNS({
-  region: process.env.AWS_REGION || 'us-east-1',
-});
+const sns = new AWS.SNS({ region: process.env.AWS_REGION });
 
-const topicArn = 'arn:aws:sns:us-east-1:159447948044:epamASobolev-UploadsNotificationTopic';
+const topicArn = process.env.SNS_TOPIC_ARN;
 
-exports.subscribeEmail = async (email) => {
+exports.publishNotification = async (message) => {
   const params = {
-    Protocol: 'email',
     TopicArn: topicArn,
-    Endpoint: email,
+    Message: message,
   };
-  await sns.subscribe(params).promise();
-};
-
-exports.unsubscribeEmail = async (email) => {
-  const subscriptions = await sns.listSubscriptionsByTopic({ TopicArn: topicArn }).promise();
-  const subscription = subscriptions.Subscriptions.find(sub => sub.Endpoint === email);
-
-  if (!subscription) {
-    throw new Error('Subscription not found');
-  }
-
-  await sns.unsubscribe({ SubscriptionArn: subscription.SubscriptionArn }).promise();
+  await sns.publish(params).promise();
 };
