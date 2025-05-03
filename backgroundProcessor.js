@@ -1,5 +1,5 @@
 const sqsService = require('./services/sqsService');
-const snsService = require('./services/snsService');
+//const snsService = require('./services/snsService');
 
 const pollMessages = async () => {
   try {
@@ -16,7 +16,7 @@ Extension: ${body.extension}
 Download link: ${body.downloadUrl}
       `;
 
-      await snsService.publishNotification(notificationText);
+//      await snsService.publishNotification(notificationText);
 
       await sqsService.deleteMessage(message.ReceiptHandle);
     }

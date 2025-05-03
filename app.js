@@ -15,7 +15,7 @@ app.post('/upload', upload.single('image'), imageController.uploadImage);
 
 app.post('/subscribe', imageController.subscribeEmail);
 
-//app.post('/unsubscribe', imageController.unsubscribeEmail);
+app.post('/unsubscribe', imageController.unsubscribeEmail);
 
 app.get('/download/:fileName', imageController.downloadImage);
 
