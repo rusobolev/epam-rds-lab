@@ -3,6 +3,7 @@ require('./backgroundProcessor');
 const express = require('express');
 const multer = require('multer');
 const imageController = require('./controllers/imageController');
+const { triggerConsistencyCheck } = require('./controllers/triggerController');
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
@@ -22,6 +23,8 @@ app.get('/download/:fileName', imageController.downloadImage);
 app.get('/metadata/random', imageController.getRandomImageMetadata);
 
 app.get('/metadata/:fileName', imageController.getImageMetadata);
+
+app.get('/trigger-consistency-check', triggerConsistencyCheck);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}\n`);
