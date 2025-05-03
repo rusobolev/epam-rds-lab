@@ -11,19 +11,21 @@ const triggerConsistencyCheck = async (req, res) => {
   try {
     const command = new InvokeCommand({
       FunctionName: 'epamASobolev-DataConsistencyFunction',
-      InvocationType: 'RequestResponse', 
-      LogType: 'Tail', 
+      InvocationType: 'RequestResponse',
+      LogType: 'Tail',
     });
 
     const response = await lambdaClient.send(command);
 
-    const logs = Buffer.from(response.LogResult, 'base64').toString('utf8');
-    console.log('📝 Lambda logs:\n', logs);
+    const rawLog = Buffer.from(response.LogResult, 'base64').toString('utf8');
+    const logLines = rawLog.split('\n').filter(Boolean); 
+
+    console.log('📝 Lambda logs:\n', logLines.join('\n'));
 
     res.status(200).json({
       message: 'Lambda executed successfully',
       statusCode: response.StatusCode,
-      logs: logs,
+      logs: logLines, 
     });
   } catch (error) {
     console.error('❌ Failed to invoke Lambda:', error);
